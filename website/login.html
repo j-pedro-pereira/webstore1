@@ -1,0 +1,57 @@
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Login / Sign up</title>
+
+		<!-- CSS link -->
+		<link rel="stylesheet" href="css/login.css" />
+	</head>
+
+	<body>
+		<div class="container">
+			<form class="form form-hidden" id="createLogin">
+				<h1 class="form_title">Login</h1>
+				<div class="form_message form_message-error">Incorrect username and/or password!</div>
+
+				<div class="form_input-group">
+					<input type="text" class="form_input" id="loginUsername" autofocus placeholder="username" />
+				</div>
+
+				<div class="form_input-group">
+					<input type="password" class="form_input" id="loginPassword" autofocus placeholder="password" />
+				</div>
+				<button class="form_button" id="loginButton" type="submit">Log in</button>
+				<p class="form_text">
+					<a href="#" class="form_link">Forgot password</a>
+				</p>
+				
+				<button class="form_link" id="linkCreateAccount">Create account</button>
+			</form>
+
+			<form class="form" id="createAccount">
+				<h1 class="form_title">Create Account</h1>
+
+				<div class="form_input-group">
+					<input type="text" class="form_input" id= "createAccountUsername" autofocus placeholder="Username" />
+				</div>
+
+				<div class="form_input-group">
+					<input type="password" class="form_input" id="createAccountPassword" autofocus placeholder="Password" />
+				</div>
+
+
+				<div class="options">
+
+					<button class="form_button" id="createAccountButton" type="submit">Create Account</button>
+					<span>or</span>
+					<button class="form_link" id="linkLogin">Sign up</button>
+				</div>
+			</form>
+		</div>
+		<script src="./js/login.js"></script>
+	</body>
+
+
+
+</html>

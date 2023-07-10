@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webstore</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+      <h1>Webstore</h1>
+      <div class="user-buttons">
+        <button id="login-btn">Login</button>
+      </div>
+    </header>
+    
+    <main>
+      <div class="container" id="productContainer">
+        <h2>Products</h2> 
+        
+      </div>
+
+      <div class="add-product-container">
+        <button id="addProductButton">Add Product</button>
+        <form id="addProductForm" class="hidden">
+          <input type="text" id="titleInput" placeholder="Title" required>
+          <input type="text" id="priceInput" placeholder="Price" required>
+          <input type="text" id="descriptionInput" placeholder="Description" required>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+
+    </main>
+  
+    <footer>
+      <p>&copy; 2023 Webstore. All rights reserved.</p>
+    </footer>
+
+    
+
+  </body>
+
+<script>
+
+document.getElementById("login-btn").addEventListener("click", function() {
+    
+    window.location.href = "login.html";
+  });
+  
+    const addProductButton = document.getElementById("addProductButton");
+    const addProductForm = document.getElementById("addProductForm");
+    const titleInput = document.getElementById("titleInput");
+    const priceInput = document.getElementById("priceInput");
+    const descriptionInput = document.getElementById("descriptionInput");
+
+  const productContainer = document.getElementById("productContainer");
+  fetch("/api/products/allProduct")
+      .then(response => response.json())
+      .then(products => {
+        products.forEach(product => {
+          const productElement = document.createElement("div");
+          productElement.classList.add("product");
+          productElement.innerHTML = `
+            <h2>${product.title}</h2>
+            <p>${product.price} euros</p>
+            <p>${product.description}</p>
+            <button class="remove-button" data-product-id="${product.id}">Remove</button>
+          `;
+          productContainer.appendChild(productElement);
+        });
+
+        // Add event listeners to the remove buttons
+        const removeButtons = document.getElementsByClassName("remove-button");
+        Array.from(removeButtons).forEach(button => {
+          button.addEventListener("click", handleRemoveProduct);
+        });
+      })
+      .catch(error => {
+        console.error(error);
+        // Handle any errors
+      });
+
+    // Function to handle the remove product action
+    function handleRemoveProduct(event) {
+      const productId = event.target.dataset.productId;
+
+      // Send an HTTP DELETE request to the server to remove the product
+      fetch(`/api/products/${productId}`, {
+        method: "DELETE"
+      })
+        .then(response => response.json())
+        .then(data => {
+          // Product successfully removed
+          console.log("Product removed:", data);
+          // Remove the product element from the UI
+          event.target.parentNode.remove();
+        })
+        .catch(error => {
+          console.error(error);
+          // Handle any errors
+        });
+    }
+
+    addProductButton.addEventListener("click", () => {
+      addProductForm.classList.toggle("hidden");
+    });
+
+    // Handle the form submission for adding a product
+    addProductForm.addEventListener("submit", event => {
+      event.preventDefault();
+
+      const title = titleInput.value;
+      const price = priceInput.value;
+      const description = descriptionInput.value;
+
+      const requestBody = {
+        title: title,
+        price: price,
+        description: description
+      };
+
+      fetch("/api/products/addProduct", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(requestBody)
+      })
+        .then(response => response.json())
+        .then(product => {
+          // Product successfully added
+          console.log("Product added:", product);
+          // Clear the form inputs
+          titleInput.value = "";
+          priceInput.value = "";
+          descriptionInput.value = "";
+          // Add the new product element to the UI
+          const productElement = document.createElement("div");
+          productElement.classList.add("product");
+          productElement.innerHTML = `
+            <h2>${product.title}</h2>
+            <p>${product.description}</p>
+            <button class="remove-button" data-product-id="${product.id}">Remove</button>
+          `;
+          productContainer.appendChild(productElement);
+          // Add event listener to the remove button of the new product
+          productElement.querySelector(".remove-button").addEventListener("click", handleRemoveProduct);
+        })
+        .catch(error => {
+          console.error(error);
+          // Handle any errors
+        });
+    });
+
+
+</script>
+
+</html>
